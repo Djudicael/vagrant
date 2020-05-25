@@ -1,0 +1,58 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure("2") do |config|
+
+    config.vm.define "kubemaster" do |kub|
+        kub.vm.box = "hashicorp/bionic64"
+        kub.vm.box_version = "1.0.282"
+        kub.vm.provision "docker"
+        kub.vm.hostname = 'kubmaster'
+        kub.vm.box_url = "hashicorp/bionic64"
+
+        kub.vm.network "private_network", ip: "192.168.56.101"
+        kub.vm.synced_folder ".", "/vagrant", disabled: true
+
+        kub.vm.provider "hyperv"  do |h|
+            h.maxmemory = 2048
+            h.memory = 2048
+            h.cpus = 2
+            h.vmname = "kubemaster"
+            #h.customize ["modifycm", :id, "--natdnshostresolver1", "on"]
+            #h.customize ["modifycm", :id, "--memory", "2048"]
+            #h.customize ["modifycm", :id, "--name", "kubnode"]
+            #h.customize ["modifycm", :id, "--cpus", "2"]
+            h.enable_virtualization_extensions = true
+            h.linked_clone = true
+        
+        end
+    end
+
+    config.vm.define "kubnode" do |kubnode|
+        kubnode.vm.box = "hashicorp/bionic64"
+        kubnode.vm.box_version = "1.0.282"
+        kubnode.vm.provision "docker"
+        kubnode.vm.hostname = 'kubmaster'
+        kubnode.vm.box_url = "hashicorp/bionic64"
+
+        kubnode.vm.network "private_network", ip: "192.168.56.101"
+        kubnode.vm.synced_folder ".", "/vagrant", disabled: true
+
+        kubnode.vm.provider "hyperv"  do |h|
+            h.maxmemory = 2048
+            h.memory = 2048
+            h.cpus = 2
+            h.vmname = "kubnode"
+            #h.customize ["modifycm", :id, "--natdnshostresolver1", "on"]
+            #h.customize ["modifycm", :id, "--memory", "2048"]
+            #h.customize ["modifycm", :id, "--name", "kubnode"]
+            #h.customize ["modifycm", :id, "--cpus", "2"]
+            h.enable_virtualization_extensions = true
+            h.linked_clone = true
+        
+        end
+    end
+       
+  end
+  
